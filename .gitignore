@@ -1,0 +1,8 @@
+/*.vsix
+.vscode-test
+out
+kanji-hiragana-romainji-dict.json
+node_modules
+dist
+out
+private-data.txt

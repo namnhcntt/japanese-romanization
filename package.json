@@ -1,0 +1,125 @@
+{
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/namnhcntt/vscode-japanese-romanization"
+  },
+  "icon": "data/icon.png",
+  "author": {
+    "name": "vietprogrammer",
+    "email": "namnhcntt@gmail.com"
+  },
+  "publisher": "vietprogrammer",
+  "name": "japanese-romanization",
+  "displayName": "Japanese Romanization",
+  "description": "A Visual Studio Code extension that converts Japanese text to Romanji. This tool helps developers seamlessly translate Japanese names for methods, variables, and classes into Romanji, making code more accessible and easier to manage.",
+  "version": "0.2.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:csharp",
+    "onLanguage:json",
+    "onLanguage:plaintext",
+    "onLanguage:ini",
+    "onLanguage:markdown",
+    "onLanguage:yaml",
+    "onLanguage:xml",
+    "onLanguage:html",
+    "onLanguage:css",
+    "onLanguage:scss",
+    "onLanguage:less"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "codeActions": [],
+    "commands": [
+      {
+        "command": "extension.japaneseRomanization",
+        "title": "Japanese Romanization: Transform"
+      },
+      {
+        "command": "extension.importCache",
+        "title": "Japanese Romanization: Import Cache"
+      },
+      {
+        "command": "extension.exportCache",
+        "title": "Japanese Romanization: Export Cache"
+      },
+      {
+        "command": "extension.clearCache",
+        "title": "Japanese Romanization: Clear Cache"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Japanese Romanization Settings",
+      "properties": {
+        "kanjiToRomanji.provider": {
+          "type": "string",
+          "enum": [
+            "offline",
+            "labs.goo.ne.jp"
+          ],
+          "default": "offline",
+          "description": "Select the provider for Kanji to Romanji conversion."
+        },
+        "kanjiToRomanji.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for labs.goo.ne.jp (only used when the provider is labs.goo.ne.jp)."
+        },
+        "kanjiToRomanji.cache": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable caching for Kanji to Romanji conversion."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test",
+    "vsce-package": "vsce package --yarn",
+    "vsce-publish": "vsce publish --yarn"
+  },
+  "dependencies": {
+    "axios": "^1.7.4",
+    "https-proxy-agent": "^7.0.5",
+    "kuromoji": "^0.1.2",
+    "kuroshiro": "^1.2.0",
+    "kuroshiro-analyzer-kuromoji": "^1.1.0",
+    "wanakana": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/kuromoji": "^0.1.3",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.11.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^8.57.0",
+    "shx": "^0.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "keywords": [
+    "preview"
+  ]
+}
