@@ -1,6 +1,15 @@
-# japanese-romanization README
+# japanese-romanization
 
 Help the developer to convert Japanese text to Romanization.
+
+The published extension can be found at [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=vietprogrammer.japanese-romanization).
+
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/vietprogrammer.japanese-romanization)
+![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/vietprogrammer.japanese-romanization)
+![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/vietprogrammer.japanese-romanization)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/vietprogrammer.japanese-romanization)
+![License](https://img.shields.io/github/license/namnhcntt/vscode-japanese-romanization)
+
 
 ## Features
 
