@@ -245,7 +245,8 @@ export enum RomajiCase {
     PASCAL = "pascal",
     CAMEL = "camel",
     KEBAB = "kebab",
-    JAPANESE = "japanese"
+    JAPANESE = "japanese",
+    NONE = "none"
 }
 
 export const RomanjiCaseMap: {
@@ -275,7 +276,8 @@ export const RomanjiCaseMap: {
     [RomajiCase.JAPANESE]: (str: string) => {
         console.log('convert back to japanese for str', str);
         return `japanese_not_implemented_${str}`;
-    }
+    },
+    [RomajiCase.NONE]: (str: string) => str
 };
 
 export const RomajiCaseOptions: {

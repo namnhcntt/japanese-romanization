@@ -51,6 +51,16 @@ export function activate(context: vscode.ExtensionContext) {
 			gooLabApiKey = config.get<string>('apiKey', '');
 			const cache = config.get<boolean>('cache', true);
 			try {
+				if (!isJapaneseWord(selectedText)) {
+					// Convert the selected text to the selected case
+					const transformedText = transformTextToAnotherMode(selectedText, romanjiCase);
+					// Replace the selected text with the transformed text
+					editor.edit(editBuilder => {
+						editBuilder.replace(selection, transformedText);
+					});
+					return;
+				}
+
 				const lines = splitSelectedTextToSingleLine(selectedText);
 				if (lines.length > 0) {
 					let op = '';
@@ -112,6 +122,43 @@ export function activate(context: vscode.ExtensionContext) {
 function splitSelectedTextToSingleLine(selectedText: string): string[] {
 	const lines = selectedText.split(/\r?\n/);
 	return lines.map(line => line.trim());
+}
+
+function isJapaneseWord(selectedText: string): boolean {
+	return isHiragana(selectedText) || isKatakana(selectedText) || isKanji(selectedText); 1
+}
+
+/*
+Check if the selected text is already in camel case, snake case, kebab case, pascal case, or upper snake case. Then convert it to the other cases.
+*/
+function transformTextToAnotherMode(selectedText: string, selectedRomajiCase: RomajiCase): string {
+	let op = '';
+	// detect source romajiCase of selectedText from content
+	let sourceRomajiCase: RomajiCase = RomajiCase.CAMEL;
+	if (selectedText.includes('_')) {
+		sourceRomajiCase = RomajiCase.SNAKE;
+	} else if (selectedText.includes('-')) {
+		sourceRomajiCase = RomajiCase.KEBAB;
+	} else if (selectedText[0] === selectedText[0].toUpperCase()) {
+		sourceRomajiCase = RomajiCase.PASCAL;
+	} else if (selectedText[0] === selectedText[0].toLowerCase()) {
+		sourceRomajiCase = RomajiCase.CAMEL;
+	}
+
+	// convert this text to sentence (replace to space)
+	let transformedText = selectedText;
+	if (sourceRomajiCase === RomajiCase.SNAKE) {
+		transformedText = selectedText.replace(/_/g, ' ');
+	} else if (sourceRomajiCase === RomajiCase.KEBAB) {
+		transformedText = selectedText.replace(/-/g, ' ');
+	} else if (sourceRomajiCase === RomajiCase.PASCAL) {
+		transformedText = selectedText.replace(/([A-Z])/g, ' $1').trim();
+	} else if (sourceRomajiCase === RomajiCase.CAMEL) {
+		transformedText = selectedText.replace(/([A-Z])/g, ' $1').trim();
+	}
+
+	// convert this text to selectedRomajiCase
+	return RomanjiCaseMap[selectedRomajiCase](transformedText);
 }
 
 export async function doTransformText(selectedText: string, cache: boolean, provider: string, selectedRomajiCase: RomajiCase): Promise<string> {
