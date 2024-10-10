@@ -5,7 +5,7 @@ import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
 import path from 'path';
 import * as vscode from 'vscode';
-import { isHiragana, isKanji, isKatakana, tokenize, toRomaji } from 'wanakana';
+import { isHiragana, isKanji, isKatakana, tokenize } from 'wanakana';
 import { CustomCodeActionProvider } from './code-action-providers/custom-code-action.providet';
 import { HIRA_KATA_ROMANJI_MAP, RomajiCase, RomanjiCaseMap } from './constants';
 
@@ -13,7 +13,6 @@ import { HIRA_KATA_ROMANJI_MAP, RomajiCase, RomanjiCaseMap } from './constants';
 let kanjiData: any;
 let kanjiFilePath: string;
 let kuroshiro: Kuroshiro;
-let hepburnConverter: string;
 let gooLabApiKey: string;
 export function activate(context: vscode.ExtensionContext) {
 	const languages = ['javascript', 'typescript', 'csharp', 'json', 'plaintext', 'ini', 'markdown', 'yaml', 'xml', 'html', 'css', 'scss', 'less'];
@@ -52,13 +51,22 @@ export function activate(context: vscode.ExtensionContext) {
 			gooLabApiKey = config.get<string>('apiKey', '');
 			const cache = config.get<boolean>('cache', true);
 			try {
-				// tokenize the selected text
-				let op = await doTransformText(selectedText, cache, provider, romanjiCase);
-
-				// Replace the selected text with the translated text
-				editor.edit(editBuilder => {
-					editBuilder.replace(selection, op);
-				});
+				const lines = splitSelectedTextToSingleLine(selectedText);
+				if (lines.length > 0) {
+					let op = '';
+					for (const line of lines) {
+						const translatedText = await doTransformText(line, cache, provider, romanjiCase);
+						op += '\n' + translatedText;
+					}
+					if (op.startsWith('\n')) {
+						op = op.substring(1);
+					}
+					// Replace the selected text with the translated text
+					editor.edit(editBuilder => {
+						editBuilder.replace(selection, op);
+					});
+					return;
+				}
 			} catch (error: any) {
 				vscode.window.showErrorMessage('Error translating text: ' + error.message);
 			}
@@ -99,6 +107,11 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Cache imported!');
 	});
 	context.subscriptions.push(importCacheDisposable);
+}
+
+function splitSelectedTextToSingleLine(selectedText: string): string[] {
+	const lines = selectedText.split(/\r?\n/);
+	return lines.map(line => line.trim());
 }
 
 export async function doTransformText(selectedText: string, cache: boolean, provider: string, selectedRomajiCase: RomajiCase): Promise<string> {

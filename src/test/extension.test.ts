@@ -76,6 +76,10 @@ suite('Extension Test Suite', () => {
 			// kanji
 			{ selectedText: '計算書', selectedRomajiCase: RomajiCase.PASCAL, expected: 'Keisansho' },
 			// end kanji
+
+			// others
+			{ selectedText: '受付事件コード', selectedRomajiCase: RomajiCase.PASCAL, expected: 'UKETSUKE_JIKEN_KODO' },
+			// end others
 		];
 
 		for (const testCase of testCases) {
