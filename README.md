@@ -40,6 +40,16 @@ Select the text you want to convert and press ***control .*** (**control + perio
 
 ![Screenshot demo 2](./data/Screenshot_2.gif)
 
+## Command
+
+* `extension.japaneseRomanization`: Transform the selected text.
+* `extension.importCache`: Import cache from a file.
+* `extension.exportCache`: Export cache to a file.
+* `extension.clearCache`: Clear cache.
+* `extension.importDictionary`: Import dictionary from a file.
+* `extension.exportDictionary`: Export dictionary to a file.
+* `extension.clearDictionary`: Clear dictionary.
+* `extension.editDictionary`: Edit dictionary.
 
 ## Extension Settings
 
@@ -48,8 +58,11 @@ This extension contributes the following settings:
 * `provider`: Provider for convert Kanji text.
     * `offline` (**default**): Use the kuroshiro library to convert the text.
     * `goo`: Use the labs.goo.ne.jp API to convert the text.
+    * `OpenAI` (Beta): Use the OpenAI API to convert the text and OpenAI-like endpoint.
 * `apiKey`: API key for the labs.goo.ne.jp API. (Only required if the provider is goo)
+* `customOpenAIUrl`: Custom OpenAI URL (Only required if the provider is OpenAI)
 * `cache` (default **false**): Cache the result of the conversion. (Faster convert for goo provider)
+* `enableTransformMode`: Enable transform mode in the suggestion list.
 
 ## Known Issues
 
@@ -91,5 +104,14 @@ Using kuroshiro: https://github.com/sglkc/kuroshiro-ts
 ### 0.2.1
 
 * Add screenshort demo.
+
+### 0.3.0
+
+* Support transform multiple lines of text.
+* Transform mode can be customized in setting. (kanjiToRomanji.enableTransformMode)
+* Add new transform mode: upper snake case (UPPER_SNAKE_CASE), back to japanese (Japanese) (only available if exist in dictionary or transformed before)
+* Beta support OpenAI provider (and OpenAI API-like endpoint)
+* Add command to import, export, clear, edit dictionary.
+* Fix some issue when transform.
 ---
 **Enjoy!**

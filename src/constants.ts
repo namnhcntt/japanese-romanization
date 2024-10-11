@@ -241,9 +241,12 @@ export const HIRA_KATA_ROMANJI_MAP = {
 
 export enum RomajiCase {
     SNAKE = "snake",
+    UPPER_SNAKE = "upper_snake",
     PASCAL = "pascal",
     CAMEL = "camel",
-    KEBAB = "kebab"
+    KEBAB = "kebab",
+    JAPANESE = "japanese",
+    NONE = "none"
 }
 
 export const RomanjiCaseMap: {
@@ -251,6 +254,7 @@ export const RomanjiCaseMap: {
 } = {
     // replace space to case
     [RomajiCase.SNAKE]: (str: string) => str.toLowerCase().replace(/ /g, "_"),
+    [RomajiCase.UPPER_SNAKE]: (str: string) => str.toUpperCase().replace(/ /g, "_"),
     [RomajiCase.PASCAL]: (str: string) => {
         const op = str.replace(/(?:^| )\w/g, (match) => match.toUpperCase());
         // replace space to case
@@ -269,13 +273,20 @@ export const RomanjiCaseMap: {
             .join('');
     },
     [RomajiCase.KEBAB]: (str: string) => str.toLowerCase().replace(/ /g, "-"),
+    [RomajiCase.JAPANESE]: (str: string) => {
+        console.log('convert back to japanese for str', str);
+        return `japanese_not_implemented_${str}`;
+    },
+    [RomajiCase.NONE]: (str: string) => str
 };
 
 export const RomajiCaseOptions: {
     [key: string]: RomajiCase
 } = {
     ["snake case"]: RomajiCase.SNAKE,
+    ["upper snake case"]: RomajiCase.UPPER_SNAKE,
     ["pascal case"]: RomajiCase.PASCAL,
     ["camel case"]: RomajiCase.CAMEL,
-    ["kebab case"]: RomajiCase.KEBAB
+    ["kebab case"]: RomajiCase.KEBAB,
+    ["japanese"]: RomajiCase.JAPANESE
 };

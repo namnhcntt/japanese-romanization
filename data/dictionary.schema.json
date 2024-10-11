@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "data": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sourceText": {
+                        "type": "string",
+                        "description": "The original Japanese text."
+                    },
+                    "transformedRomaji": {
+                        "type": "string",
+                        "description": "The Romanized version of the original text."
+                    }
+                },
+                "required": [
+                    "sourceText",
+                    "transformedRomaji"
+                ]
+            }
+        }
+    }
+}

@@ -54,6 +54,26 @@
       {
         "command": "extension.clearCache",
         "title": "Japanese Romanization: Clear Cache"
+      },
+      {
+        "command": "extension.importDictionary",
+        "title": "Japanese Romanization: Import Dictionary"
+      },
+      {
+        "command": "extension.exportDictionary",
+        "title": "Japanese Romanization: Export Dictionary"
+      },
+      {
+        "command": "extension.clearDictionary",
+        "title": "Japanese Romanization: Clear Dictionary"
+      },
+      {
+        "command": "extension.clearDictionary",
+        "title": "Japanese Romanization: Clear Dictionary"
+      },
+      {
+        "command": "extension.editDictionary",
+        "title": "Japanese Romanization: Edit Dictionary"
       }
     ],
     "configuration": {
@@ -64,7 +84,8 @@
           "type": "string",
           "enum": [
             "offline",
-            "labs.goo.ne.jp"
+            "labs.goo.ne.jp",
+            "OpenAI"
           ],
           "default": "offline",
           "description": "Select the provider for Kanji to Romanji conversion."
@@ -72,12 +93,39 @@
         "kanjiToRomanji.apiKey": {
           "type": "string",
           "default": "",
-          "description": "API key for labs.goo.ne.jp (only used when the provider is labs.goo.ne.jp)."
+          "description": "API key for labs.goo.ne.jp (only used when the provider is labs.goo.ne.jp and OpenAI)."
+        },
+        "kanjiToRomanji.customOpenAIUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Custom OpenAI URL (only used when the provider is OpenAI)."
         },
         "kanjiToRomanji.cache": {
           "type": "boolean",
           "default": false,
           "description": "Enable caching for Kanji to Romanji conversion."
+        },
+        "kanjiToRomanji.enableTransformMode": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "snake case (snake_case)",
+              "upper snake case (UPPER_SNAKE_CASE)",
+              "pascal case (PascalCase)",
+              "camel case (camelCase)",
+              "kebab case (kebab-case)",
+              "back to japanese (Japanese)"
+            ]
+          },
+          "uniqueItems": true,
+          "default": [
+            "snake case (snake_case)",
+            "pascal case (PascalCase)",
+            "camel case (camelCase)",
+            "kebab case (kebab-case)"
+          ],
+          "description": "Select the case options you want to use."
         }
       }
     }
@@ -101,7 +149,9 @@
     "kuromoji": "^0.1.2",
     "kuroshiro": "^1.2.0",
     "kuroshiro-analyzer-kuromoji": "^1.1.0",
-    "wanakana": "^5.3.1"
+    "wanakana": "^5.3.1",
+    "kuromojin": "^3.0.0",
+    "shunou": "^1.1.1"
   },
   "devDependencies": {
     "@types/kuromoji": "^0.1.3",

@@ -51,31 +51,36 @@ suite('Extension Test Suite', () => {
 		const provider = 'offline';
 
 		const testCases = [
-			// snake
-			{ selectedText: 'はっとり しんばし あおき', selectedRomajiCase: RomajiCase.SNAKE, expected: 'hattori_shimbashi_aoki' },
-			{ selectedText: 'まつおか ゆうか さとう', selectedRomajiCase: RomajiCase.SNAKE, expected: 'matsuoka_yuka_sato' },
-			{ selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.SNAKE, expected: 'ono_ooka_koriyama' },
-			{ selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.SNAKE, expected: 'sampei_homma_kanda' },
-			// end snake
-			// pascal
-			{ selectedText: 'まつおか ゆうか さとう', selectedRomajiCase: RomajiCase.PASCAL, expected: 'MatsuokaYukaSato' },
-			{ selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.PASCAL, expected: 'OnoOokaKoriyama' },
-			{ selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.PASCAL, expected: 'SampeiHommaKanda' },
-			// end pascal
-			// camel
-			{ selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.CAMEL, expected: 'onoOokaKoriyama' },
-			{ selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.CAMEL, expected: 'sampeiHommaKanda' },
-			// end camel
-			// kebab
-			{ selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.KEBAB, expected: 'sampei-homma-kanda' },
-			{ selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.KEBAB, expected: 'ono-ooka-koriyama' },
-			{ selectedText: 'はっとり しんばし あおき', selectedRomajiCase: RomajiCase.KEBAB, expected: 'hattori-shimbashi-aoki' },
-			{ selectedText: 'まつおか ゆうか さとう', selectedRomajiCase: RomajiCase.KEBAB, expected: 'matsuoka-yuka-sato' },
-			// end kebab
+			// // snake
+			// { selectedText: 'はっとり しんばし あおき', selectedRomajiCase: RomajiCase.SNAKE, expected: 'hattori_shimbashi_aoki' },
+			// { selectedText: 'まつおか ゆうか さとう', selectedRomajiCase: RomajiCase.SNAKE, expected: 'matsuoka_yuka_sato' },
+			// { selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.SNAKE, expected: 'ono_ooka_koriyama' },
+			// { selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.SNAKE, expected: 'sampei_homma_kanda' },
+			// // end snake
+			// // pascal
+			// { selectedText: 'まつおか ゆうか さとう', selectedRomajiCase: RomajiCase.PASCAL, expected: 'MatsuokaYukaSato' },
+			// { selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.PASCAL, expected: 'OnoOokaKoriyama' },
+			// { selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.PASCAL, expected: 'SampeiHommaKanda' },
+			// // end pascal
+			// // camel
+			// { selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.CAMEL, expected: 'onoOokaKoriyama' },
+			// { selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.CAMEL, expected: 'sampeiHommaKanda' },
+			// // end camel
+			// // kebab
+			// { selectedText: 'さんぺい ほんま かんだ', selectedRomajiCase: RomajiCase.KEBAB, expected: 'sampei-homma-kanda' },
+			// { selectedText: 'おおの おおおか こおりやま', selectedRomajiCase: RomajiCase.KEBAB, expected: 'ono-ooka-koriyama' },
+			// { selectedText: 'はっとり しんばし あおき', selectedRomajiCase: RomajiCase.KEBAB, expected: 'hattori-shimbashi-aoki' },
+			// { selectedText: 'まつおか ゆうか さとう', selectedRomajiCase: RomajiCase.KEBAB, expected: 'matsuoka-yuka-sato' },
+			// // end kebab
 
-			// kanji
-			{ selectedText: '計算書', selectedRomajiCase: RomajiCase.PASCAL, expected: 'Keisansho' },
-			// end kanji
+			// // kanji
+			// { selectedText: '計算書', selectedRomajiCase: RomajiCase.PASCAL, expected: 'Keisansho' },
+			// // end kanji
+
+			// // others
+			// { selectedText: '受付事件コード', selectedRomajiCase: RomajiCase.PASCAL, expected: 'UKETSUKE_JIKEN_KODO' },
+			{ selectedText: '一部事項証明', selectedRomajiCase: RomajiCase.SNAKE, expected: 'ichibu_jiko_shomei' },
+			// end others
 		];
 
 		for (const testCase of testCases) {

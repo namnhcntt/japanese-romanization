@@ -1505,7 +1505,7 @@ kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kuromoji@^0.1.1, kuromoji@^0.1.2:
+kuromoji@0.1.2, kuromoji@^0.1.1, kuromoji@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/kuromoji/-/kuromoji-0.1.2.tgz#293f0d6706df006112137980588d5daac26d0790"
   integrity sha512-V0dUf+C2LpcPEXhoHLMAop/bOht16Dyr+mDiIE39yX3vqau7p80De/koFqpiTcL1zzdZlc3xuHZ8u5gjYRfFaQ==
@@ -1513,6 +1513,14 @@ kuromoji@^0.1.1, kuromoji@^0.1.2:
     async "^2.0.1"
     doublearray "0.0.2"
     zlibjs "^0.3.1"
+
+kuromojin@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/kuromojin/-/kuromojin-3.0.0.tgz#54a1a6643110f49f741c4beb82fef400d1cd498b"
+  integrity sha512-3h3qnn/NVVhqoKFP4oc7e6apO2B01Atc056oiVlIY7Uoup4rhrnBe28g3y9lK1HTmLDQEejvXB+3I3qxAneF7A==
+  dependencies:
+    kuromoji "0.1.2"
+    lru_map "^0.4.1"
 
 kuroshiro-analyzer-kuromoji@^1.1.0:
   version "1.1.0"
@@ -1592,6 +1600,11 @@ lru-cache@^10.2.0:
   version "10.4.3"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.4.3.tgz#410fc8a17b70e598013df257c2446b7f3383f119"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
+
+lru_map@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/lru_map/-/lru_map-0.4.1.tgz#f7b4046283c79fb7370c36f8fca6aee4324b0a98"
+  integrity sha512-I+lBvqMMFfqaV8CJCISjI3wbjmwVu/VyOoU7+qtu9d7ioW5klMgsTTiUOUp+DJvfTTzKXoPbyC6YfgkNcyPSOg==
 
 make-dir@^4.0.0:
   version "4.0.0"
@@ -2064,6 +2077,13 @@ shelljs@^0.8.5:
     glob "^7.0.0"
     interpret "^1.0.0"
     rechoir "^0.6.2"
+
+shunou@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/shunou/-/shunou-1.1.1.tgz#ab2aabab9ff5b0ce8c1b6848684b2689cafb3070"
+  integrity sha512-A9QP8X7UautiIEUb/x30amX0NiiVVKEZt1vneMhkySNvn+6soN/K/LaSCdkydrGydx6xqoAGOgCJ1ZpWggRg+g==
+  dependencies:
+    wanakana "^5.3.1"
 
 shx@^0.3.4:
   version "0.3.4"
