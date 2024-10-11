@@ -13,7 +13,7 @@
   "name": "japanese-romanization",
   "displayName": "Japanese Romanization",
   "description": "A Visual Studio Code extension that converts Japanese text to Romanji. This tool helps developers seamlessly translate Japanese names for methods, variables, and classes into Romanji, making code more accessible and easier to manage.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "engines": {
     "vscode": "^1.80.0"
   },
