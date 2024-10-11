@@ -14,6 +14,9 @@ let kanjiData: any;
 let kanjiFilePath: string;
 let kuroshiro: Kuroshiro;
 let gooLabApiKey: string;
+let openAIUrl: string;
+let openAIKey: string;
+let dictionaryFilePath: string;
 export function activate(context: vscode.ExtensionContext) {
 	const languages = ['javascript', 'typescript', 'csharp', 'json', 'plaintext', 'ini', 'markdown', 'yaml', 'xml', 'html', 'css', 'scss', 'less'];
 
@@ -32,6 +35,13 @@ export function activate(context: vscode.ExtensionContext) {
 	kanjiFilePath = path.join(context.extensionPath, 'data', 'kanji-hiragana-romainji-dict.json');
 	// Read and parse the JSON file
 	kanjiData = JSON.parse(fs.readFileSync(kanjiFilePath, 'utf8'));
+	dictionaryFilePath = path.join(context.extensionPath, 'data', 'dictionary.json');
+	const config = vscode.workspace.getConfiguration('kanjiToRomanji');
+	const provider = config.get<string>('provider', 'offline');
+	gooLabApiKey = config.get<string>('apiKey', '');
+	openAIUrl = config.get<string>('customOpenAIUrl', '');
+	openAIKey = config.get<string>('apiKey', '');
+	const cache = config.get<boolean>('cache', true);
 	// Register the command that is triggered when the extension is used
 	let disposable = vscode.commands.registerCommand('extension.japaneseRomanization', async (romanjiCase: RomajiCase) => {
 		console.log('japaneseRomanization', romanjiCase);
@@ -46,27 +56,19 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
-			const config = vscode.workspace.getConfiguration('kanjiToRomanji');
-			const provider = config.get<string>('provider', 'offline');
-			gooLabApiKey = config.get<string>('apiKey', '');
-			const cache = config.get<boolean>('cache', true);
 			try {
-				if (!isJapaneseWord(selectedText)) {
-					// Convert the selected text to the selected case
-					const transformedText = transformTextToAnotherMode(selectedText, romanjiCase);
-					// Replace the selected text with the transformed text
-					editor.edit(editBuilder => {
-						editBuilder.replace(selection, transformedText);
-					});
-					return;
-				}
-
 				const lines = splitSelectedTextToSingleLine(selectedText);
 				if (lines.length > 0) {
 					let op = '';
 					for (const line of lines) {
-						const translatedText = await doTransformText(line, cache, provider, romanjiCase);
-						op += '\n' + translatedText;
+						if (!isJapaneseWord(line)) {
+							// Convert the selected text to the selected case
+							const transformedText = transformTextToAnotherMode(line, romanjiCase);
+							op += '\n' + transformedText;
+						} else {
+							const translatedText = await doTransformText(line, cache, provider, romanjiCase);
+							op += '\n' + translatedText;
+						}
 					}
 					if (op.startsWith('\n')) {
 						op = op.substring(1);
@@ -117,6 +119,81 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Cache imported!');
 	});
 	context.subscriptions.push(importCacheDisposable);
+
+	// edit dictionary (if dictionary.json file not exist, create it)
+	let editDictionaryDisposable = vscode.commands.registerCommand('extension.editDictionary', async () => {
+		// open dictionary.json file in vscode
+		const dictionaryFilePath = path.join(context.extensionPath, 'data', 'dictionary.json');
+		// if file does not exist, create it, with schema dictionary.schema.json
+		if (!fs.existsSync(dictionaryFilePath)) {
+			const initData = {
+				"$schema": "dictionary.schema.json",
+				"data": [
+					{
+						"sourceText": "",
+						"transformedRomaji": ""
+					}
+				]
+			};
+			fs.writeFileSync(dictionaryFilePath, JSON.stringify(initData, null, 2));
+		}
+
+		vscode.workspace.openTextDocument(dictionaryFilePath).then(doc => {
+			vscode.window.showTextDocument(doc);
+		});
+	});
+	context.subscriptions.push(editDictionaryDisposable);
+
+	// importDictionary
+	let importDictionaryDisposable = vscode.commands.registerCommand('extension.importDictionary', async () => {
+		// import from path select like the import cache
+		const importPath = await vscode.window.showOpenDialog({
+			filters: {
+				JSON: ['json']
+			}
+		});
+		if (!importPath) {
+			return;
+		}
+		const dictionaryData = JSON.parse(fs.readFileSync(importPath[0].fsPath, 'utf8'));
+		fs.writeFileSync(dictionaryFilePath, JSON.stringify(dictionaryData, null, 2));
+		vscode.window.showInformationMessage('Dictionary imported!');
+	});
+	context.subscriptions.push(importDictionaryDisposable);
+	// exportDictionary
+	let exportDictionaryDisposable = vscode.commands.registerCommand('extension.exportDictionary', async () => {
+		// export to a file dialog, default file name is dictionary.json
+		const exportPath = await vscode.window.showSaveDialog({
+			defaultUri: vscode.Uri.file(path.join(context.extensionPath, 'data', 'dictionary.json')),
+			filters: {
+				JSON: ['json']
+			}
+		});
+		if (!exportPath) {
+			return;
+		}
+		const dictionaryData = JSON.parse(fs.readFileSync(dictionaryFilePath, 'utf8'));
+		fs.writeFileSync(exportPath.fsPath, JSON.stringify(dictionaryData, null, 2));
+		vscode.window.showInformationMessage('Dictionary exported!');
+	});
+	context.subscriptions.push(exportDictionaryDisposable);
+	// clearDictionary
+	let clearDictionaryDisposable = vscode.commands.registerCommand('extension.clearDictionary', async () => {
+		fs.writeFileSync(dictionaryFilePath, JSON.stringify({ "$schema": "dictionary.schema.json", "data": [] }, null, 2));
+		vscode.window.showInformationMessage('Dictionary cleared!');
+	});
+	context.subscriptions.push(clearDictionaryDisposable);
+}
+
+function transformTextByDictionary(selectedText: string): string {
+	// read dictionary.json file
+	const dictionaryData = JSON.parse(fs.readFileSync(dictionaryFilePath, 'utf8'));
+	// find the item in dictionaryData.data that has sourceText equal to selectedText
+	const item = dictionaryData.data.find((item: any) => item.sourceText === selectedText);
+	if (item) {
+		return item.transformedRomaji;
+	}
+	return selectedText;
 }
 
 function splitSelectedTextToSingleLine(selectedText: string): string[] {
@@ -125,23 +202,29 @@ function splitSelectedTextToSingleLine(selectedText: string): string[] {
 }
 
 function isJapaneseWord(selectedText: string): boolean {
-	return isHiragana(selectedText) || isKatakana(selectedText) || isKanji(selectedText); 1
+	// convert selectedText to array of character, and check if at least one character is hiragana, katakana, or kanji, then return true
+	const selectedTextArray = selectedText.split('');
+	for (const char of selectedTextArray) {
+		if (isHiragana(char) || isKatakana(char) || isKanji(char)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /*
 Check if the selected text is already in camel case, snake case, kebab case, pascal case, or upper snake case. Then convert it to the other cases.
 */
 function transformTextToAnotherMode(selectedText: string, selectedRomajiCase: RomajiCase): string {
-	let op = '';
 	// detect source romajiCase of selectedText from content
 	let sourceRomajiCase: RomajiCase = RomajiCase.CAMEL;
 	if (selectedText.includes('_')) {
 		sourceRomajiCase = RomajiCase.SNAKE;
 	} else if (selectedText.includes('-')) {
 		sourceRomajiCase = RomajiCase.KEBAB;
-	} else if (selectedText[0] === selectedText[0].toUpperCase()) {
+	} else if (selectedText.startsWith(selectedText[0].toUpperCase())) {
 		sourceRomajiCase = RomajiCase.PASCAL;
-	} else if (selectedText[0] === selectedText[0].toLowerCase()) {
+	} else if (selectedText.startsWith(selectedText[0].toLowerCase())) {
 		sourceRomajiCase = RomajiCase.CAMEL;
 	}
 
@@ -173,13 +256,20 @@ export async function doTransformText(selectedText: string, cache: boolean, prov
 			if (cache && kanjiData[tokenStr]) {
 				translatedText = kanjiData[tokenStr];
 			} else {
-				if (isHiragana(tokenStr) || isKatakana(tokenStr)) {
+				const textFromDict = transformTextByDictionary(tokenStr);
+				if (textFromDict !== tokenStr) {
+					translatedText = transformTextToAnotherMode(textFromDict, selectedRomajiCase);
+					console.debug('translatedText from dictionary', tokenStr, translatedText);
+				} else if (isHiragana(tokenStr) || isKatakana(tokenStr)) {
 					translatedText = await toRomajiTextHepburn(tokenStr);
 				} else if (isKanji(tokenStr)) {
 					if (provider === 'labs.goo.ne.jp') {
 						translatedText = await convertKanjiToRomaji(tokenStr);
 						console.log('translated kanji', tokenStr, translatedText);
-					} else {
+					} else if (provider === 'OpenAI') {
+						translatedText = await convertKanjiToRomajiByOpenAI(tokenStr);
+					}
+					else {
 						// offline
 						translatedText = await convertKanjiToRomajiOffline(tokenStr);
 					}
@@ -251,7 +341,7 @@ async function convertKanjiToRomajiOffline(text: string): Promise<string> {
 	console.log('convertKanjiToRomajiOffline', text);
 	let op = '';
 	const kuroshiro = await getKuroshiroInstance();
-	const hiraganaConverted = await kuroshiro.convert(text, { to: 'katakana' });
+	const hiraganaConverted = await kuroshiro.convert(text, { to: 'katakana', mode: 'spaced' });
 	op = await toRomajiTextHepburn(hiraganaConverted);
 	return op;
 }
@@ -278,21 +368,23 @@ async function convertKanjiToRomaji(text: string): Promise<string> {
 	return op;
 }
 
-async function convertToRomanjiUsingGooLab(text: string): Promise<string> {
-	const requestUrl = 'https://labs.goo.ne.jp/api/katakana';
+async function convertKanjiToRomajiByOpenAI(text: string): Promise<string> {
+	console.log('convertKanjiToRomajiByOpenAI', text);
+	const prompt = `convert text to romaji (hepburn style): ${text} (no need to explain, just give me the output)`;
 	const body = JSON.stringify({
-		app_id: gooLabApiKey,
-		sentence: text,
-		output_type: 'katakana',
+		prompt: prompt,
+		max_tokens: 60,
+		stop: ['\n'],
 	});
 
-	const result = await fetchWithProxy(requestUrl, body, {
+	const result = await fetchWithProxy(openAIUrl, body, {
 		headers: {
 			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${openAIKey}`,
 		},
 	});
 
-	return result.converted;
+	return result.choices[0].text;
 }
 
 async function toRomajiTextHepburn(text: string): Promise<string> {

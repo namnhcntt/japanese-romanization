@@ -1,0 +1,9 @@
+{
+  "$schema": "dictionary.schema.json",
+  "data": [
+    {
+      "sourceText": "一部事項証明",
+      "transformedRomaji": "ichibu_jiko_shomei"
+    }
+  ]
+}
