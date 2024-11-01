@@ -185,6 +185,30 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(clearDictionaryDisposable);
 }
 
+function transformLineByDictionary(line: string): string {
+	let op = line;
+	const length = line.length;
+	let currentText = '';
+	const tokens = [];
+	for (let i = 0; i < length; i++) {
+		for (let j = i + 1; j <= length; j++) {
+			const text = line.substring(i, j);
+			tokens.push(text);
+		}
+	}
+
+	// sort tokens from length from longest to shortest
+	tokens.sort((a, b) => b.length - a.length);
+	for (const token of tokens) {
+		const transformedText = transformTextByDictionary(token);
+		if (transformedText !== token) {
+			op = op.replace(token, transformedText);
+		}
+	}
+
+	return op;
+}
+
 function transformTextByDictionary(selectedText: string): string {
 	// read dictionary.json file
 	const dictionaryData = JSON.parse(fs.readFileSync(dictionaryFilePath, 'utf8'));
@@ -246,7 +270,15 @@ function transformTextToAnotherMode(selectedText: string, selectedRomajiCase: Ro
 
 export async function doTransformText(selectedText: string, cache: boolean, provider: string, selectedRomajiCase: RomajiCase): Promise<string> {
 	const standarlized = standarlizedText(selectedText);
-	const tokens = tokenize(standarlized);
+
+	// transform part of text by dictionary, then tokenlize the rest
+	const dictionaryTransformedText = transformLineByDictionary(standarlized);
+
+	if (!isJapaneseWord(dictionaryTransformedText)) {
+		return transformTextToAnotherMode(dictionaryTransformedText, selectedRomajiCase);
+	}
+
+	const tokens = tokenize(dictionaryTransformedText);
 	console.log('tokens', tokens);
 	let op = '';
 	for (const token of tokens) {
@@ -408,6 +440,15 @@ async function getKuroshiroInstance() {
 	return newKuroshiro;
 }
 
+/**
+ * Converts a string of Hiragana/Katakana characters to Hepburn Romanization.
+ * This function processes the input in two passes: first for basic conversion, 
+ * then for handling special Romanization cases.
+ * 
+ * @param input - The string containing Hiragana/Katakana characters to be converted.
+ * @returns The Romanized string in Hepburn format.
+ * @throws No exceptions are explicitly thrown, but invalid input may lead to unexpected results.
+ */
 export function toHepburn(input: string) {
 	const map: any = HIRA_KATA_ROMANJI_MAP;
 	let romaData = "";

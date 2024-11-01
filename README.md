@@ -113,5 +113,10 @@ Using kuroshiro: https://github.com/sglkc/kuroshiro-ts
 * Beta support OpenAI provider (and OpenAI API-like endpoint)
 * Add command to import, export, clear, edit dictionary.
 * Fix some issue when transform.
+
+### 0.4.0
+
+* Fix issue when transform with dictionary.
+
 ---
 **Enjoy!**
